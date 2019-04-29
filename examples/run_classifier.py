@@ -212,14 +212,12 @@ class Sst2Processor(DataProcessor):
 
     def get_train_examples(self, data_dir, train_size):
         """See base class."""
-        lines = self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
+        lines = self._read_tsv(os.path.join(data_dir, "train.tsv"))
 
         if (len(lines) > train_size):
             lines = lines[:train_size];
 
         return self._create_examples(lines,"train");
-
-            self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
 
     def get_dev_examples(self, data_dir):
         """See base class."""
