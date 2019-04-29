@@ -750,7 +750,7 @@ def main():
     if args.do_train:
 
         if (task_name == "sst-2"):
-            train_examples = processor.get_train_examples(args.data_dir,train_size)
+            train_examples = processor.get_train_examples(args.data_dir,args.train_size)
         else:
             train_examples = processor.get_train_examples(args.data_dir)
 
