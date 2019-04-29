@@ -210,9 +210,15 @@ class ColaProcessor(DataProcessor):
 class Sst2Processor(DataProcessor):
     """Processor for the SST-2 data set (GLUE version)."""
 
-    def get_train_examples(self, data_dir):
+    def get_train_examples(self, data_dir, train_size):
         """See base class."""
-        return self._create_examples(
+        lines = self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
+
+        if (len(lines) > train_size):
+            lines = lines[:train_size];
+
+        return self._create_examples(lines,"train");
+
             self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
 
     def get_dev_examples(self, data_dir):
@@ -585,6 +591,12 @@ def main():
                         required=True,
                         help="The output directory where the model predictions and checkpoints will be written.")
 
+
+    parser.add_argument("--train_size",
+                        default=99999999999,
+                        type=int,
+                        help="The size of the training dataset.")
+
     ## Other parameters
     parser.add_argument("--cache_dir",
                         default="",
@@ -738,7 +750,12 @@ def main():
     train_examples = None
     num_train_optimization_steps = None
     if args.do_train:
-        train_examples = processor.get_train_examples(args.data_dir)
+
+        if (task_name == "sst-2"):
+            train_examples = processor.get_train_examples(args.data_dir)
+        else:
+            train_examples = processor.get_train_examples(args.data_dir,train_size)
+
         num_train_optimization_steps = int(
             len(train_examples) / args.train_batch_size / args.gradient_accumulation_steps) * args.num_train_epochs
         if args.local_rank != -1:
